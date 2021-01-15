@@ -3,6 +3,7 @@ module Index
 open Elmish
 open Fable.Remoting.Client
 open Shared
+open Feliz
 
 type Model =
     { Todos: Todo list
@@ -44,7 +45,9 @@ open Fable.React.Props
 open Fulma
 
 let navBrand =
-    Navbar.Brand.div [] [
+    Navbar.Brand.div [
+        Modifiers [Modifier.Spacing(Spacing.MarginLeft, Spacing.Is4)]
+    ] [
         Navbar.Item.a [
             Navbar.Item.Props [ Href "https://safe-stack.github.io/" ]
             Navbar.Item.IsActive true
@@ -84,36 +87,46 @@ let containerBox (model : Model) (dispatch : Msg -> unit) =
         ]
     ]
 
-let view (model : Model) (dispatch : Msg -> unit) =
-    div [] [
-        Menu.view ()
-        Hero.hero [
-            Hero.Color IsPrimary
-            Hero.IsFullHeight
-            Hero.Props [
-                Style [
-                    Background """linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://unsplash.it/1200/900?random") no-repeat center center fixed"""
-                    BackgroundSize "cover"
-                ]
+let pushMenu content =
+    React.functionComponent(fun () ->
+        let (isOpen, setOpen) = React.useState(false)
+        div [
+            Style [
+                CSSProp.Custom ("transition","margin-left .5s")
+                MarginLeft (if isOpen then 250 else 68)
             ]
-        ] [
-            div [ Style [ZIndex 0] ] [
-                Hero.head [ ] [
-                    Navbar.navbar [ ] [
-                        Container.container [ ] [ navBrand ]
-                    ]
-                ]
+        ][
+            Menu.view isOpen setOpen
+            yield! content
+        ])
+    |> fun m -> m ()
+    
+let view (model : Model) (dispatch : Msg -> unit) = pushMenu [
+    Hero.hero [
+        Hero.Color IsPrimary
+        Hero.IsFullHeight
+        Hero.Props [
+            Style [
+                Background """linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://unsplash.it/1200/900?random") no-repeat center center fixed"""
+                BackgroundSize "cover"
             ]
-            Hero.body [ ] [
-                Container.container [ ] [
-                    Column.column [
-                        Column.Width (Screen.All, Column.Is6)
-                        Column.Offset (Screen.All, Column.Is3)
-                    ] [
-                        Heading.p [ Heading.Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ] [ str "Stateful_Menu" ]
-                        containerBox model dispatch
-                    ]
+        ]
+    ] [
+        Hero.head [ ] [
+            Navbar.navbar [ ] [
+                Container.container [ ] [ navBrand ]
+            ]
+        ]
+        Hero.body [ ] [
+            Container.container [ ] [
+                Column.column [
+                    Column.Width (Screen.All, Column.Is6)
+                    Column.Offset (Screen.All, Column.Is3)
+                ] [
+                    Heading.p [ Heading.Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ] [ str "Stateful_Menu" ]
+                    containerBox model dispatch
                 ]
             ]
         ]
     ]
+]

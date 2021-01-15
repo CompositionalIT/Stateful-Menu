@@ -2,7 +2,6 @@ module Menu
 
 open System
 open Feliz
-open Elmish
 
 let sideNavStyle (width : double) = [
     style.height (length.percent 100)
@@ -24,13 +23,12 @@ let menuButtonStyle = [
     style.cursor.pointer
 ]
 
-let view = React.functionComponent(fun () ->
-    let (isOpen, setOpen) = React.useState(false)
+let view isOpen setOpen = 
     Html.div [
         if isOpen then
-            prop.style (sideNavStyle 68.0)
-        else
             prop.style (sideNavStyle 250.0)
+        else
+            prop.style (sideNavStyle 68.0)
         prop.children [
             Html.div[
                 prop.style menuButtonStyle
@@ -38,4 +36,4 @@ let view = React.functionComponent(fun () ->
                 prop.text "🍔"
             ]
         ]
-    ])
+    ]
