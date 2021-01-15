@@ -2,8 +2,11 @@ module Index
 
 open Elmish
 open Fable.Remoting.Client
+open Fable.React
+open Fable.React.Props
+open Fulma
+
 open Shared
-open Feliz
 
 type Model =
     { Todos: Todo list
@@ -40,10 +43,6 @@ let update (msg: Msg) (model: Model): Model * Cmd<Msg> =
     | AddedTodo todo ->
         { model with Todos = model.Todos @ [ todo ] }, Cmd.none
 
-open Fable.React
-open Fable.React.Props
-open Fulma
-
 let navBrand =
     Navbar.Brand.div [
         Modifiers [Modifier.Spacing(Spacing.MarginLeft, Spacing.Is4)]
@@ -58,7 +57,6 @@ let navBrand =
             ]
         ]
     ]
-
 
 let containerBox (model : Model) (dispatch : Msg -> unit) =
     Box.box' [ ] [
@@ -86,22 +84,8 @@ let containerBox (model : Model) (dispatch : Msg -> unit) =
             ]
         ]
     ]
-
-let pushMenu content =
-    React.functionComponent(fun () ->
-        let (isOpen, setOpen) = React.useState(false)
-        div [
-            Style [
-                CSSProp.Custom ("transition","margin-left .5s")
-                MarginLeft (if isOpen then 250 else 68)
-            ]
-        ][
-            Menu.view isOpen setOpen
-            yield! content
-        ])
-    |> fun m -> m ()
     
-let view (model : Model) (dispatch : Msg -> unit) = pushMenu [
+let view (model : Model) (dispatch : Msg -> unit) = Menu.view [
     Hero.hero [
         Hero.Color IsPrimary
         Hero.IsFullHeight

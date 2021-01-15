@@ -10,7 +10,7 @@ let sideNavStyle (width : double) = [
     style.top 0
     style.zIndex 1
     style.left 0
-    style.backgroundColor color.black
+    style.backgroundColor (color.rgb (0,184,156))
     style.overflowX.hidden
     style.transitionDurationSeconds 0.5
 ]
@@ -23,17 +23,29 @@ let menuButtonStyle = [
     style.cursor.pointer
 ]
 
-let view isOpen setOpen = 
-    Html.div [
-        if isOpen then
-            prop.style (sideNavStyle 250.0)
-        else
-            prop.style (sideNavStyle 68.0)
-        prop.children [
-            Html.div[
-                prop.style menuButtonStyle
-                prop.onClick (fun _ -> setOpen (not isOpen))
-                prop.text "🍔"
+let containerStyle (margin : int) = [
+    style.transitionProperty [transitionProperty.marginLeft]
+    style.transitionDuration (TimeSpan.FromSeconds 0.5)
+    style.marginLeft margin
+]
+
+let view content =
+    (React.functionComponent(fun () ->
+        let (isOpen, setOpen) = React.useState(false)
+        Html.div [
+            prop.style (containerStyle(if isOpen then 250 else 68))
+            prop.children [
+                Html.div [
+                    prop.style (sideNavStyle(if isOpen then 250.0 else 68.0))
+                    prop.children [
+                        Html.div[
+                            prop.style menuButtonStyle
+                            prop.onClick (fun _ -> setOpen (not isOpen))
+                            prop.text "🍔"
+                        ]
+                    ]
+                ]
+                yield! content
             ]
-        ]
-    ]
+        ])) ()
+    
