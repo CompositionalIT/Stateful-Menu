@@ -30,7 +30,8 @@ let containerStyle (margin : int) = [
 ]
 
 let view content =
-    (React.functionComponent(fun () ->
+    {| content = content |}
+    |> React.functionComponent(fun (props: {| content : ReactElement seq |}) ->
         let (isOpen, setOpen) = React.useState(false)
         Html.div [
             prop.style (containerStyle(if isOpen then 250 else 68))
@@ -45,7 +46,7 @@ let view content =
                         ]
                     ]
                 ]
-                yield! content
+                yield! props.content
             ]
-        ])) ()
+        ]) 
     
