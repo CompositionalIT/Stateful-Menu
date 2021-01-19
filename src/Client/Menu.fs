@@ -30,7 +30,7 @@ let containerStyle (margin : int) = [
 ]
 
 let view content =
-    {| content = content |}
+    {| content = content |} // have to wrap in an object here, using the seq directly errors
     |> React.functionComponent(fun (props: {| content : ReactElement seq |}) ->
         let (isOpen, setOpen) = React.useState(false)
         Html.div [
