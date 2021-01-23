@@ -29,9 +29,8 @@ let containerStyle (margin : int) = [
     style.marginLeft margin
 ]
 
-let view content =
-    {| content = content |} // have to wrap in an object here, using the seq directly errors
-    |> React.functionComponent(fun (props: {| content : ReactElement seq |}) ->
+let view' = 
+    React.functionComponent(fun (props: {| content : ReactElement seq |}) ->
         let (isOpen, setOpen) = React.useState(false)
         Html.div [
             Html.div [
@@ -50,3 +49,6 @@ let view content =
             ]
         ]) 
     
+// have to wrap in an object here, using the seq directly errors
+let inline view content = view' {| content = content |}
+
